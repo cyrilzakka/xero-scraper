@@ -35,7 +35,7 @@ class XeroSpider(scrapy.Spider):
 
     def find_accession(self, response):
         self.logger.info('Loading accession numbers from file...')
-        df = pd.read_csv(SOURCE_CSV, nrows=n_rows, skiprows=skip_rows)
+        df = pd.read_csv(SOURCE_CSV, nrows=n_rows, skiprows=(1,skip_rows))
         accession_numbers = df['accession_number'].tolist()
         for i in accession_numbers:
             yield scrapy.FormRequest(url=f'{ROOT_URL}wado/?v=1.0.0.R812SP3HF_v20180718_1223&requestType=STUDY&contentType=text/javascript&maxResults=250&AccessionNumber={i}&ae=local&IssuerOfPatientID=&groupByIssuer=*&suppressReportFlags=PRELIMINARY&language=en_US&theme=theme,XeroCreator',

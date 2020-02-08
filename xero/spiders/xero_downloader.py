@@ -55,11 +55,11 @@ class XeroSpider(scrapy.Spider):
         self.logger.info('Downloading resources for %s...', STUDY_UID)
 
         valid_mammos = list(filter(lambda x: x.count(' ') == 1 and x.split(':')[0] in ['R MLO' , 'R CC', 'L MLO' , 'L CC'], find_values('seriesUID', response.body_as_unicode())))
+        valid_objects = find_values('objectUID', response.body_as_unicode())
         if len(valid_mammos) >= 1:
-            for i in valid_mammos:
-                MAMMO_TYPE, SERIES_UID = i.split(':')
-                ID = SERIES_UID.split('.')[-1]
-                OBJECT_UID = SERIES_UID[0:-len(ID)] + str(int(ID)+1)
+            for i, j in enumerate(valid_mammos):
+                MAMMO_TYPE, SERIES_UID = j.split(':')
+                OBJECT_UID = valid_objects[i]
                 mammo = f'{ROOT_URL}wado/?v=1.0.0.R812SP3HF_v20180718_1223&requestType=XERO&studyUID={STUDY_UID}&seriesUID={SERIES_UID}&language=en_US&objectUID={OBJECT_UID}&columns={IMG_SIZE}&ae=local&v=1.0.0.R812SP3HF_v20180718_1223'
                 urls.append(mammo)
                 item[MAMMO_TYPE.lower().replace(" ", "_")] = SERIES_UID

@@ -46,7 +46,7 @@ class XeroSpider(scrapy.Spider):
         yield scrapy.FormRequest(url=f'{ROOT_URL}wado/?v=1.0.0.R812SP3HF_v20180718_1223&requestType=IMAGE&contentType=text/javascript&regroup=*&studyUID={STUDY_UID}&Position=0&Count=256&fromHeader=true&suppressReportFlags=PRELIMINARY&ae=local&ver=9.9.MGSR.rt&language=en_US&theme=theme,XeroCreator',
                                  callback=self.scrape_data)
 
-    def scrape_data(self, response):
+     def scrape_data(self, response):
         item = XeroItem()
         urls = []
 
@@ -55,11 +55,13 @@ class XeroSpider(scrapy.Spider):
         self.logger.info('Downloading resources for %s...', STUDY_UID)
 
         valid_mammos = list(filter(lambda x: x.count(' ') == 1 and x.split(':')[0] in ['R MLO' , 'R CC', 'L MLO' , 'L CC'], find_values('seriesUID', response.body_as_unicode())))
-        valid_objects = find_values('objectUID', response.body_as_unicode())
         if len(valid_mammos) >= 1:
-            for i, j in enumerate(valid_mammos):
-                MAMMO_TYPE, SERIES_UID = j.split(':')
-                OBJECT_UID = valid_objects[i]
+            for i in valid_mammos:
+                MAMMO_TYPE, SERIES_UID = i.split(':')
+
+                # Determining objectUID
+                warmup_shot = re.search(i+'(.+?)spacingX', response.body_as_unicode()).group(1)
+                OBJECT_UID = re.search('objectUID(.+?),', warmup_shot).group(1).split(":")[1][1:-1]
                 mammo = f'{ROOT_URL}wado/?v=1.0.0.R812SP3HF_v20180718_1223&requestType=XERO&studyUID={STUDY_UID}&seriesUID={SERIES_UID}&language=en_US&objectUID={OBJECT_UID}&columns={IMG_SIZE}&ae=local&v=1.0.0.R812SP3HF_v20180718_1223'
                 urls.append(mammo)
                 item[MAMMO_TYPE.lower().replace(" ", "_")] = SERIES_UID

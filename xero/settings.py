@@ -16,7 +16,7 @@ NEWSPIDER_MODULE = 'xero.spiders'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'xero (+http://www.yourdomain.com)'
+USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
@@ -34,6 +34,7 @@ FEED_EXPORTERS = {
 }
 FEED_EXPORT_FIELDS = ["study_uid", "r_mlo", "l_mlo", "r_cc", "l_cc"]
 LOG_LEVEL = 'INFO'
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
